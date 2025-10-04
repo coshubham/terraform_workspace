@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-      - staging
-      - dev
+      - test
+      - prod
 
 jobs:
   terraform:
