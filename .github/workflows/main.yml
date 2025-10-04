@@ -3,6 +3,7 @@ name: Terraform CI/CD
 on:
   push:
     branches:
+      - main
       - test
       - prod
 
@@ -37,6 +38,11 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
+      # Select or create workspace
+      - name: Select Terraform Workspace
+        run: |
+          terraform workspace select ${{ env.TF_WORKSPACE }} || terraform workspace new ${{ env.TF_WORKSPACE }}
+
       # Validate Terraform code
       - name: Terraform Validate
         run: terraform validate
@@ -45,7 +51,17 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -out=tfplan
 
-      # Terraform Apply (only for main branch / prod)
-      - name: Terraform Apply
+      # Terraform Apply for Staging (manual approval)
+      - name: Terraform Apply Staging
+        if: github.ref == 'refs/heads/staging'
+        run: |
+          echo "Manual approval required for staging apply"
+          terraform apply -auto-approve tfplan
+
+      # Terraform Apply for Main / Prod (auto)
+      - name: Terraform Apply Prod
         if: github.ref == 'refs/heads/main'
-        run: terraform apply -auto-approve tfplan
+        run: |
+          echo "Applying Terraform plan for main branch (prod)..."
+          terraform workspace select main || terraform workspace new main
+          terraform apply -auto-approve tfplan
