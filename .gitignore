@@ -1,0 +1,24 @@
+# Terraform state files
+*.tfstate
+*.tfstate.backup
+
+# Crash log files
+crash.log
+
+# Sensitive variable files
+*.tfvars
+
+# Override files (optional)
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# .terraform directory (plugins and cache)
+.terraform/
+
+# MacOS files
+.DS_Store
+
+# Logs
+*.log
